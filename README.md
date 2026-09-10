@@ -23,10 +23,9 @@ and **Tailwind CSS**, deployed to **Cloudflare Pages**.
 
 > **Note:** the original request mentioned `@cloudflare/next-on-pages`. That
 > package is **deprecated** ("Please use the OpenNext adapter instead" — its
-> own README) and its last release does not support the Node runtime that the
-> admin `fs` writes need. This repo uses the official replacement,
-> **`@opennextjs/cloudflare`**. A legacy `functions/[[...routes]].ts` entry is
-> left in place only if you insist on the old adapter — see the last section.
+> own README), does not support Next.js 14.2.x, and its edge-only runtime
+> cannot run the admin `fs` writes. This repo uses the official replacement,
+> **`@opennextjs/cloudflare`**.
 
 ## Project structure
 
@@ -50,7 +49,6 @@ and **Tailwind CSS**, deployed to **Cloudflare Pages**.
 ├── public/
 │   ├── robots.txt
 │   └── sitemap.xml
-├── functions/[[...routes]].ts    ← legacy next-on-pages entry (deletable)
 ├── wrangler.jsonc                ← Pages/worker config (nodejs_compat)
 ├── open-next.config.ts           ← OpenNext Cloudflare config
 ├── .env.example
@@ -175,21 +173,9 @@ live (the sitemap `<loc>` should match your actual home URL).
 - **`npx opennextjs-cloudflare` not found** → `npm i -D @opennextjs/cloudflare`.
 - **404 on admin with correct token** → `ADMIN_TOKEN` env missing at runtime
   (check Pages env vars; local uses `.env.local`).
-
-## Using the legacy `@cloudflare/next-on-pages` adapter
-
-If you really want the deprecated adapter instead of OpenNext:
-
-```bash
-npm i -D @cloudflare/next-on-pages
-npx @cloudflare/next-on-pages   # builds from functions/[[...routes]].ts
-```
-
-- Keep `functions/[[...routes]].ts`.
-- Set Pages build command to `npx @cloudflare/next-on-pages` and build output
-  directory to `.vercel/output/static`.
-- This only supports the **edge runtime**, so the admin `fs` write and Node
-  runtime routes will not work on Pages with this adapter.
+- **npm install fails with an ERESOLVE peer error** → you are on an outdated
+  branch or have `@cloudflare/next-on-pages` in package.json. Remove it; it is
+  not used by the OpenNext build.
 
 ---
 
