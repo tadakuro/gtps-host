@@ -1,0 +1,20 @@
+{
+  "serverName": "NexusGTPS",
+  "status": "Online",
+  "description": "Best GTPS 2026",
+  "ip": "162.19.242.225",
+  "port": 17091,
+  "version": "4.98",
+  "features": [
+    "Custom World",
+    "Daily Quest",
+    "24/7 Uptime",
+    "Active Community"
+  ],
+  "hosts": [
+    "growtopia1.com",
+    "www.growtopia1.com",
+    "growtopia2.com",
+    "www.growtopia2.com"
+  ]
+}
