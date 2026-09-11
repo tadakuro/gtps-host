@@ -1,9 +1,11 @@
 import { headers } from "next/headers";
 import { getServerData } from "@/lib/server-data";
+import { buildPtunnelConfig } from "@/lib/host-file";
 import HostButtons from "@/components/HostButtons";
 import EyeMascot from "@/components/EyeMascot";
 import PageBackground from "@/components/PageBackground";
 import CopyButton from "@/components/CopyButton";
+import SocialIcon from "@/components/SocialIcon";
 
 function featureIcon(index: number) {
   switch (index % 4) {
@@ -60,12 +62,14 @@ export default async function HomePage() {
                   rel="noopener noreferrer"
                   className="btn-social"
                 >
-                  {link.iconUrl && (
+                  {link.iconUrl ? (
                     <img
                       src={link.iconUrl}
                       alt={link.label}
                       className="h-7 w-7"
                     />
+                  ) : (
+                    <SocialIcon label={link.label} url={link.url} />
                   )}
                   {link.label}
                 </a>
@@ -82,48 +86,54 @@ export default async function HomePage() {
             </h2>
 
             <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(340px,1fr))]">
-              {data.downloadCards.map((card, i) => (
-                <div key={`card-${i}`} className="card-glow text-center">
-                  <h3
-                    className="mb-5 text-xl font-bold text-neon"
-                    style={{ color: "#00ff88" }}
-                  >
-                    {card.title}
-                  </h3>
-
-                  {card.subtitle && (
-                    <p className="mb-3 text-sm text-zinc-400">{card.subtitle}</p>
-                  )}
-
-                  {card.buttons.map((btn, j) => (
-                    <a
-                      key={`btn-${i}-${j}`}
-                      href={btn.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-neon mb-3 block"
+              {data.downloadCards.map((card, i) => {
+                const copyText = card.hostBlock
+                  ? buildPtunnelConfig(data)
+                  : card.copyText;
+                return (
+                  <div key={`card-${i}`} className="card-glow text-center">
+                    <h3
+                      className="mb-5 text-xl font-bold text-neon"
+                      style={{ color: "#00ff88" }}
                     >
-                      {btn.label}
-                    </a>
-                  ))}
+                      {card.title}
+                    </h3>
 
-                  {card.note && (
-                    <p className="mb-3 mt-5 font-semibold text-neon">
-                      {card.note}
-                    </p>
-                  )}
+                    {card.subtitle && (
+                      <p className="mb-3 text-sm text-zinc-400">
+                        {card.subtitle}
+                      </p>
+                    )}
 
-                  {card.copyText && (
-                    <>
-                      <div className="link-box my-4">{card.copyText}</div>
-                      <CopyButton
-                        textToCopy={card.copyText}
-                        label="Copy"
-                      />
-                    </>
-                  )}
-                </div>
-              ))}
+                    {card.buttons.map((btn, j) => (
+                      <a
+                        key={`btn-${i}-${j}`}
+                        href={btn.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-neon mb-3 block"
+                      >
+                        {btn.label}
+                      </a>
+                    ))}
+
+                    {card.note && (
+                      <p className="mb-3 mt-5 font-semibold text-neon">
+                        {card.note}
+                      </p>
+                    )}
+
+                    {copyText && (
+                      <>
+                        <div className="link-box my-4 whitespace-pre-wrap text-left text-sm font-mono">
+                          {copyText}
+                        </div>
+                        <CopyButton textToCopy={copyText} label="Copy" />
+                      </>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}

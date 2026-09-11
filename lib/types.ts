@@ -23,6 +23,7 @@ export interface DownloadCard {
   subtitle: string;
   note: string;
   copyText: string;
+  hostBlock: boolean;
   buttons: DownloadButton[];
 }
 

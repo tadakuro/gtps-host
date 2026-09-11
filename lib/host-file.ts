@@ -5,3 +5,17 @@ export function buildHostContent(data: ServerData): string {
   const body = lines.join("\n");
   return body ? body + "\n" : "";
 }
+
+export function buildPtunnelConfig(data: ServerData): string {
+  const hosts = data.hosts.map((host) => `${host} = ${data.ip}`).join("\n");
+  return [
+    "[General]",
+    "bypass-system = true",
+    "",
+    "[Rule]",
+    "FINAL,DIRECT",
+    "",
+    "[Host]",
+    hosts,
+  ].join("\n");
+}

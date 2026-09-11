@@ -100,7 +100,7 @@ function toPayload(form: FormState): ServerData {
 }
 
 function emptyCard(): DownloadCard {
-  return { title: "", subtitle: "", note: "", copyText: "", buttons: [] };
+  return { title: "", subtitle: "", note: "", copyText: "", hostBlock: false, buttons: [] };
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -399,6 +399,18 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
               <input className="input" value={card.subtitle} onChange={(e) => updateCard(ci, "subtitle", e.target.value)} placeholder="Subtitle (optional)" />
               <input className="input" value={card.note} onChange={(e) => updateCard(ci, "note", e.target.value)} placeholder="Note text (optional)" />
               <input className="input font-mono" value={card.copyText} onChange={(e) => updateCard(ci, "copyText", e.target.value)} placeholder="Copy-able text (optional, shown in dashed box)" />
+              <label className="flex items-start gap-2 text-xs text-zinc-400">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={card.hostBlock}
+                  onChange={(e) => updateCard(ci, "hostBlock", e.target.checked)}
+                />
+                <span>
+                  Auto-generate PowerTunnel iOS host config from IP + host
+                  fields (ignores the text above)
+                </span>
+              </label>
               {/* Buttons per card */}
               <div className="mt-2">
                 <p className="mb-2 text-xs text-zinc-500">Buttons</p>
