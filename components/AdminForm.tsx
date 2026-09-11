@@ -409,7 +409,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             checked={form.showPowerTunnelSection}
             onChange={(e) => set("showPowerTunnelSection", e.target.checked)}
           />
-          <span>Show Android &amp; PC Host section (hosts file link) below cards</span>
+          <span>Show PowerTunnel section (hosts file link) below cards</span>
         </label>
         <label className="flex items-start gap-2 text-xs text-zinc-400">
           <input

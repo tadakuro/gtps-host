@@ -175,30 +175,21 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Android & PC Host */}
+        {/* PowerTunnel */}
         {data.showPowerTunnelSection && (
           <section className="py-16">
             <h2 className="mb-6 text-center font-orbitron text-[clamp(1.3rem,5vw,2rem)] text-neon">
-              Android &amp; PC Host
+              PowerTunnel
             </h2>
             <div className="card-glow text-left">
               <p className="text-zinc-300">
-                For Android &amp; PC clients: download this hosts file and use it
-                with the app, or copy the link below.
+                For PowerTunnel (Android): copy this hosts file link into the
+                app settings.
               </p>
 
               <div className="link-box my-4 font-mono">{hostFileUrl}</div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  className="btn-neon"
-                  href="/r/host.txt"
-                  download={hostFileName}
-                >
-                  Download Host
-                </a>
-                <CopyButton textToCopy={hostFileUrl} label="Copy Link" />
-              </div>
+              <CopyButton textToCopy={hostFileUrl} label="Copy Link" />
 
               <p className="mt-4 text-xs text-zinc-500">
                 Raw file also available at{" "}
