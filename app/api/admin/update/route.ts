@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Data kurang lengkap. Nama server, IP, dan minimal 1 host wajib diisi dulu ya",
+          "Data belum lengkap. Nama server, IP, sama minimal 1 host wajib diisi dulu ya",
       },
       { status: 400 }
     );

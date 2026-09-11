@@ -35,7 +35,7 @@ export default async function AdminPage({
         </h1>
         <p className="mt-1 text-sm text-zinc-500">
           Semua perubahan langsung tersimpan &amp; langsung tampil
-          di situs, gak perlu redeploy manual.
+          di situs, gak usah redeploy manual.
         </p>
       </div>
 

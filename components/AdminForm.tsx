@@ -369,7 +369,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           <>
             <div>
               <label className="label" htmlFor="eyeImageUrl">Eye Image URL</label>
-              <input className="input font-mono" id="eyeImageUrl" value={form.eyeImageUrl} onChange={(e) => set("eyeImageUrl", e.target.value)} placeholder="Boleh kosong, nanti pakai bawaan" />
+              <input className="input font-mono" id="eyeImageUrl" value={form.eyeImageUrl} onChange={(e) => set("eyeImageUrl", e.target.value)} placeholder="Boleh dikosongin, nanti pakai bawaan kok" />
             </div>
             <div>
               <label className="label" htmlFor="speechText">Speech Bubble Text</label>
@@ -383,7 +383,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       <Section title="Social Buttons">
         {form.socialLinks.map((link, i) => (
           <div key={`soc-${i}`} className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-[1fr_2fr_auto]">
-            <input className="input" value={link.label} onChange={(e) => updateSocial(i, "label", e.target.value)} placeholder="Label-nya apa? mis. Join Discord" />
+            <input className="input" value={link.label} onChange={(e) => updateSocial(i, "label", e.target.value)} placeholder="Label-nya apa? misal: Join Discord" />
             <input className="input font-mono" value={link.url} onChange={(e) => updateSocial(i, "url", e.target.value)} placeholder="Link tujuan https://..." />
             <button type="button" className="rounded-lg bg-red-500/20 px-3 py-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeSocial(i)}>Hapus</button>
           </div>
@@ -409,7 +409,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             checked={form.showPowerTunnelSection}
             onChange={(e) => set("showPowerTunnelSection", e.target.checked)}
           />
-          <span>Tampilkan bagian PowerTunnel (link host) di bawah kartu? centang kalau mau</span>
+          <span>Buat aktifin bagian PowerTunnel (link host) di bawah kartu, centang ini</span>
         </label>
         <label className="flex items-start gap-2 text-xs text-zinc-400">
           <input
@@ -418,7 +418,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             checked={form.showIosSection}
             onChange={(e) => set("showIosSection", e.target.checked)}
           />
-          <span>Tampilkan bagian iOS Host (konfigurasi bypass) di bawah kartu? centang kalau mau</span>
+          <span>Buat aktifin bagian iOS Host (konfigurasi bypass) di bawah kartu, centang ini</span>
         </label>
         {form.downloadCards.map((card, ci) => (
           <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
@@ -477,7 +477,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       {/* Submit */}
       <div className="mb-6">
         <button className="btn-primary w-full sm:w-auto" disabled={saving} type="submit">
-          {saving ? "Menyimpan…" : "Simpan Perubahan"}
+          {saving ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
 
