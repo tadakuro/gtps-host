@@ -47,13 +47,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    writeServerData(normalized);
+    await writeServerData(normalized);
   } catch (err) {
     return NextResponse.json(
       {
         error:
-          "Could not write app/data/server.json (read-only on Cloudflare Pages). " +
-          "Run this locally and commit the change, or configure Cloudflare KV (see README).",
+          "Could not save server data. If running on Cloudflare, ensure the GTPS_KV namespace binding is configured.",
         detail: (err as Error).message,
       },
       { status: 500 }
@@ -77,10 +76,10 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     message:
-      "server.json updated." +
+      "Server data saved. Changes are live now." +
       (process.env.DEPLOY_WEBHOOK_URL
         ? " Redeploy webhook fired."
-        : " Rebuild/redeploy to publish."),
+        : ""),
     data,
   });
 }

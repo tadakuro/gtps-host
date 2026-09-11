@@ -3,8 +3,9 @@ import { getServerData } from "@/lib/server-data";
 
 export const dynamic = "force-dynamic";
 
-export function GET() {
-  return NextResponse.json(getServerData(), {
+export async function GET() {
+  const data = await getServerData();
+  return NextResponse.json(data, {
     headers: {
       "Cache-Control": "public, s-maxage=300, stale-while-revalidate=300",
     },

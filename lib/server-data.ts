@@ -5,6 +5,16 @@ import serverJson from "@/app/data/server.json";
 
 const DATA_FILE = path.join(process.cwd(), "app", "data", "server.json");
 const BUNDLED_DATA = serverJson as ServerData;
+const KV_KEY = "server-data";
+
+declare global {
+  interface CloudflareEnv {
+    GTPS_KV?: {
+      get(key: string, type?: "text"): Promise<string | null>;
+      put(key: string, value: string): Promise<void>;
+    };
+  }
+}
 
 const STATUSES: ServerStatus[] = ["Online", "Offline", "Maintenance"];
 const BG_TYPES: BackgroundType[] = ["video", "image", "none"];
@@ -128,7 +138,31 @@ export function normalizeData(raw: unknown): ServerData {
   };
 }
 
-export function getServerData(): ServerData {
+async function getKv() {
+  try {
+    const mod = await import("@opennextjs/cloudflare/cloudflare-context");
+    const ctx = await mod.getCloudflareContext({ async: true });
+    return ctx.env.GTPS_KV ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function readFromKv() {
+  const kv = await getKv();
+  if (!kv) return null;
+  try {
+    const raw = await kv.get(KV_KEY);
+    return raw ? normalizeData(JSON.parse(raw)) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getServerData(): Promise<ServerData> {
+  const fromKv = await readFromKv();
+  if (fromKv) return fromKv;
+
   try {
     const raw = fs.readFileSync(DATA_FILE, "utf-8");
     return normalizeData(JSON.parse(raw));
@@ -137,6 +171,11 @@ export function getServerData(): ServerData {
   }
 }
 
-export function writeServerData(data: ServerData): void {
+export async function writeServerData(data: ServerData): Promise<void> {
+  const kv = await getKv();
+  if (kv) {
+    await kv.put(KV_KEY, JSON.stringify(data));
+    return;
+  }
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + "\n", "utf-8");
 }

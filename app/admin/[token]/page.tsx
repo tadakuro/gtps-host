@@ -16,7 +16,7 @@ export default async function AdminPage({
     notFound();
   }
 
-  const initial = getServerData();
+  const initial = await getServerData();
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">

@@ -3,8 +3,8 @@ import { buildHostContent } from "@/lib/host-file";
 
 export const dynamic = "force-dynamic";
 
-export function GET() {
-  const body = buildHostContent(getServerData());
+export async function GET() {
+  const body = buildHostContent(await getServerData());
 
   return new Response(body, {
     headers: {

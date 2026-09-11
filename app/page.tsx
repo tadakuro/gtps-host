@@ -14,8 +14,8 @@ function featureIcon(index: number) {
   }
 }
 
-export default function HomePage() {
-  const data = getServerData();
+export default async function HomePage() {
+  const data = await getServerData();
 
   const headerList = headers();
   const host = headerList.get("host") ?? "yourdomain.com";

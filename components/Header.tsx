@@ -1,8 +1,7 @@
 import { getServerData } from "@/lib/server-data";
-import StatusBadge from "./StatusBadge";
 
-export default function Header() {
-  const data = getServerData();
+export default async function Header() {
+  const data = await getServerData();
 
   return (
     <header className="sticky top-0 z-[100] border-b-2 border-neon bg-black/[0.88] backdrop-blur-md">

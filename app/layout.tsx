@@ -16,8 +16,8 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export function generateMetadata(): Metadata {
-  const data = getServerData();
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getServerData();
   return {
     title: `${data.serverName} — Growtopia Private Server`,
     description: data.description,

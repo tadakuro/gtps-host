@@ -1,7 +1,7 @@
 import { getServerData } from "@/lib/server-data";
 
-export default function Footer() {
-  const data = getServerData();
+export default async function Footer() {
+  const data = await getServerData();
   const note = data.footerNote || "Not affiliated with Ubisoft. Growtopia is a trademark of Ubisoft.";
 
   return (
