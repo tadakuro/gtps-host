@@ -175,16 +175,16 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* PowerTunnel Host */}
+        {/* Android & PC Host */}
         {data.showPowerTunnelSection && (
           <section className="py-16">
             <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
-              PowerTunnel Host
+              Android &amp; PC Host
             </h2>
             <div className="card-glow text-left">
               <p className="text-zinc-300">
-                For PowerTunnel on Android / PC: add this hosts file URL in the
-                app settings to route Growtopia traffic to your server.
+                For Android &amp; PC clients: download this hosts file and use it
+                with the app, or copy the link below.
               </p>
 
               <div className="link-box my-4 font-mono">{hostFileUrl}</div>
@@ -204,6 +204,39 @@ export default async function HomePage() {
                 Raw file also available at{" "}
                 <code className="text-zinc-400">/r/host</code>.
               </p>
+            </div>
+          </section>
+        )}
+
+        {/* iOS Host */}
+        {data.showIosSection && (
+          <section className="py-16">
+            <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
+              iOS Host
+            </h2>
+            <div className="card-glow text-left">
+              <p className="text-zinc-300">
+                For iOS clients: use this bypass config to connect to your
+                server.
+              </p>
+
+              <div className="link-box my-4 whitespace-pre-wrap font-mono text-sm">
+                {buildPtunnelConfig(data)}
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <a
+                  className="btn-neon"
+                  href="/r/ios"
+                  download={`${hostFileName.replace(/\.txt$/i, "")}-ios.txt`}
+                >
+                  Download Config
+                </a>
+                <CopyButton
+                  textToCopy={buildPtunnelConfig(data)}
+                  label="Copy Config"
+                />
+              </div>
             </div>
           </section>
         )}

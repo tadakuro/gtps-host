@@ -33,6 +33,7 @@ interface FormState {
   hostFileName: string;
   downloadCards: DownloadCard[];
   showPowerTunnelSection: boolean;
+  showIosSection: boolean;
   showPcSection: boolean;
   pcNote: string;
   footerNote: string;
@@ -63,6 +64,7 @@ function toFormState(data: ServerData): FormState {
       buttons: c.buttons.map((b) => ({ ...b })),
     })),
     showPowerTunnelSection: data.showPowerTunnelSection,
+    showIosSection: data.showIosSection,
     showPcSection: data.showPcSection,
     pcNote: data.pcNote,
     footerNote: data.footerNote,
@@ -99,6 +101,7 @@ function toPayload(form: FormState): ServerData {
     hostFileName: form.hostFileName.trim() || "host.txt",
     downloadCards: form.downloadCards.filter((c) => c.title),
     showPowerTunnelSection: form.showPowerTunnelSection,
+    showIosSection: form.showIosSection,
     showPcSection: form.showPcSection,
     pcNote: form.pcNote.trim(),
     footerNote: form.footerNote.trim(),
@@ -406,7 +409,16 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             checked={form.showPowerTunnelSection}
             onChange={(e) => set("showPowerTunnelSection", e.target.checked)}
           />
-          <span>Show PowerTunnel Host section below cards</span>
+          <span>Show Android &amp; PC Host section (hosts file link) below cards</span>
+        </label>
+        <label className="flex items-start gap-2 text-xs text-zinc-400">
+          <input
+            type="checkbox"
+            className="mt-0.5"
+            checked={form.showIosSection}
+            onChange={(e) => set("showIosSection", e.target.checked)}
+          />
+          <span>Show iOS Host section (bypass config) below cards</span>
         </label>
         {form.downloadCards.map((card, ci) => (
           <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">

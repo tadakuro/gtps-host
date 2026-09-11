@@ -78,6 +78,7 @@
   ],
   "hostFileName": "VelQuinTopia",
   "showPowerTunnelSection": true,
+  "showIosSection": true,
   "showPcSection": false,
   "pcNote": "",
   "footerNote": "Velquintopia - Server By @MalDev"
