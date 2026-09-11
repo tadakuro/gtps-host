@@ -102,6 +102,17 @@ function toPayload(form: FormState): ServerData {
 function emptyCard(): DownloadCard {
   return { title: "", subtitle: "", note: "", copyText: "", buttons: [] };
 }
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-8">
+      <h3 className="mb-4 border-b border-white/10 pb-2 text-lg font-bold text-neon font-orbitron">
+        {title}
+      </h3>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+}
 function emptyButton(): DownloadButton {
   return { label: "", url: "" };
 }
@@ -249,15 +260,6 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       }
     },
     [form, token]
-  );
-
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="mb-8">
-      <h3 className="mb-4 border-b border-white/10 pb-2 text-lg font-bold text-neon font-orbitron">
-        {title}
-      </h3>
-      <div className="space-y-4">{children}</div>
-    </div>
   );
 
   return (
