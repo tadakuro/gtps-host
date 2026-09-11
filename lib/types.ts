@@ -46,7 +46,7 @@ export interface ServerData {
   downloadHeading: string;
   downloadCards: DownloadCard[];
   hostFileName: string;
-  showHostFileSection: boolean;
+  showPowerTunnelSection: boolean;
   showPcSection: boolean;
   pcNote: string;
   footerNote: string;

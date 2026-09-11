@@ -109,7 +109,7 @@ export function normalizeData(raw: unknown): ServerData {
     downloadHeading: "Download",
     downloadCards: [],
     hostFileName: "host.txt",
-    showHostFileSection: false,
+    showPowerTunnelSection: true,
     showPcSection: true,
     pcNote: "",
     footerNote: "Not affiliated with Ubisoft. Growtopia is a trademark of Ubisoft.",
@@ -145,7 +145,10 @@ export function normalizeData(raw: unknown): ServerData {
     hostFileName:
       str(src.hostFileName).trim() ||
       buildHostFileName(str(src.serverName).trim() || base.serverName),
-    showHostFileSection: bool(src.showHostFileSection),
+    showPowerTunnelSection:
+      src.showPowerTunnelSection === undefined
+        ? base.showPowerTunnelSection
+        : bool(src.showPowerTunnelSection),
     showPcSection: bool(src.showPcSection),
     pcNote: str(src.pcNote).trim(),
     footerNote: str(src.footerNote).trim() || base.footerNote,

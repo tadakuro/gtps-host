@@ -32,7 +32,7 @@ interface FormState {
   downloadHeading: string;
   hostFileName: string;
   downloadCards: DownloadCard[];
-  showHostFileSection: boolean;
+  showPowerTunnelSection: boolean;
   showPcSection: boolean;
   pcNote: string;
   footerNote: string;
@@ -62,7 +62,7 @@ function toFormState(data: ServerData): FormState {
       ...c,
       buttons: c.buttons.map((b) => ({ ...b })),
     })),
-    showHostFileSection: data.showHostFileSection,
+    showPowerTunnelSection: data.showPowerTunnelSection,
     showPcSection: data.showPcSection,
     pcNote: data.pcNote,
     footerNote: data.footerNote,
@@ -98,7 +98,7 @@ function toPayload(form: FormState): ServerData {
     downloadHeading: form.downloadHeading.trim() || "Download",
     hostFileName: form.hostFileName.trim() || "host.txt",
     downloadCards: form.downloadCards.filter((c) => c.title),
-    showHostFileSection: form.showHostFileSection,
+    showPowerTunnelSection: form.showPowerTunnelSection,
     showPcSection: form.showPcSection,
     pcNote: form.pcNote.trim(),
     footerNote: form.footerNote.trim(),
@@ -403,10 +403,10 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           <input
             type="checkbox"
             className="mt-0.5"
-            checked={form.showHostFileSection}
-            onChange={(e) => set("showHostFileSection", e.target.checked)}
+            checked={form.showPowerTunnelSection}
+            onChange={(e) => set("showPowerTunnelSection", e.target.checked)}
           />
-          <span>Show Host File / host.txt section below cards</span>
+          <span>Show PowerTunnel Host section below cards</span>
         </label>
         {form.downloadCards.map((card, ci) => (
           <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">

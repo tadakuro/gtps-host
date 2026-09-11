@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 import { getServerData } from "@/lib/server-data";
 import { buildHostFileName, buildPtunnelConfig } from "@/lib/host-file";
-import HostButtons from "@/components/HostButtons";
 import EyeMascot from "@/components/EyeMascot";
 import PageBackground from "@/components/PageBackground";
 import CopyButton from "@/components/CopyButton";
@@ -176,31 +175,35 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Host File + Download */}
-        {data.showHostFileSection && (
+        {/* PowerTunnel Host */}
+        {data.showPowerTunnelSection && (
           <section className="py-16">
             <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
-              Host File
+              PowerTunnel Host
             </h2>
             <div className="card-glow text-left">
               <p className="text-zinc-300">
-                Add the host file to your Growtopia installation directory, or use
-                the buttons below for a client / proxy that supports custom host
-                URLs.
+                Use this config for PowerTunnel (iOS/Android) to route Growtopia
+                traffic to {data.ip}:{data.port}.
               </p>
 
-              <div className="link-box my-4 font-mono">
-                {hostFileUrl}
+              <div className="link-box my-4 whitespace-pre-wrap font-mono text-sm">
+                {buildPtunnelConfig(data)}
               </div>
 
-              <div className="mt-4">
-                <HostButtons fileName={hostFileName} />
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <a
+                  className="btn-neon"
+                  href="/r/powertunnel"
+                  download={hostFileName}
+                >
+                  Download Config
+                </a>
+                <CopyButton
+                  textToCopy={buildPtunnelConfig(data)}
+                  label="Copy Config"
+                />
               </div>
-
-              <p className="mt-4 text-xs text-zinc-500">
-                Raw file also available without the <code>.txt</code> extension at{" "}
-                <code className="text-zinc-400">/r/host</code>.
-              </p>
             </div>
           </section>
         )}
