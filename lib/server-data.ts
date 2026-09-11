@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { ServerData, ServerStatus, BackgroundConfig, BackgroundType, SocialLink, DownloadCard } from "./types";
+import { buildHostFileName } from "./host-file";
 import serverJson from "@/app/data/server.json";
 
 const DATA_FILE = path.join(process.cwd(), "app", "data", "server.json");
@@ -101,6 +102,7 @@ export function normalizeData(raw: unknown): ServerData {
     socialLinks: [],
     downloadHeading: "Download",
     downloadCards: [],
+    hostFileName: "host.txt",
     showHostFileSection: false,
     showPcSection: true,
     pcNote: "",
@@ -134,6 +136,9 @@ export function normalizeData(raw: unknown): ServerData {
     socialLinks: normalizeSocialLinks(src.socialLinks),
     downloadHeading: str(src.downloadHeading).trim() || "Download",
     downloadCards: normalizeDownloadCards(src.downloadCards),
+    hostFileName:
+      str(src.hostFileName).trim() ||
+      buildHostFileName(str(src.serverName).trim() || base.serverName),
     showHostFileSection: bool(src.showHostFileSection),
     showPcSection: bool(src.showPcSection),
     pcNote: str(src.pcNote).trim(),

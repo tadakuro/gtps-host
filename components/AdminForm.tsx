@@ -30,6 +30,7 @@ interface FormState {
   speechText: string;
   socialLinks: SocialLink[];
   downloadHeading: string;
+  hostFileName: string;
   downloadCards: DownloadCard[];
   showHostFileSection: boolean;
   showPcSection: boolean;
@@ -56,6 +57,7 @@ function toFormState(data: ServerData): FormState {
     speechText: data.speechText,
     socialLinks: data.socialLinks.map((l) => ({ ...l })),
     downloadHeading: data.downloadHeading,
+    hostFileName: data.hostFileName,
     downloadCards: data.downloadCards.map((c) => ({
       ...c,
       buttons: c.buttons.map((b) => ({ ...b })),
@@ -94,6 +96,7 @@ function toPayload(form: FormState): ServerData {
     speechText: form.speechText.trim(),
     socialLinks: form.socialLinks.filter((l) => l.label || l.url),
     downloadHeading: form.downloadHeading.trim() || "Download",
+    hostFileName: form.hostFileName.trim() || "host.txt",
     downloadCards: form.downloadCards.filter((c) => c.title),
     showHostFileSection: form.showHostFileSection,
     showPcSection: form.showPcSection,
@@ -391,6 +394,11 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           <label className="label" htmlFor="downloadHeading">Section Heading</label>
           <input className="input" id="downloadHeading" value={form.downloadHeading} onChange={(e) => set("downloadHeading", e.target.value)} />
         </div>
+        <div>
+          <label className="label" htmlFor="hostFileName">Host File Name</label>
+          <input className="input font-mono" id="hostFileName" value={form.hostFileName} onChange={(e) => set("hostFileName", e.target.value)} placeholder="VelQuinTopia" />
+          <p className="mt-1 text-xs text-zinc-500">Filename used when visitors download the host file (e.g. VelQuinTopia.txt)</p>
+        </div>
         <label className="flex items-start gap-2 text-xs text-zinc-400">
           <input
             type="checkbox"
@@ -434,7 +442,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
                     </select>
                     <input className="input flex-1" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Button label" />
                     {btn.type === "host" ? (
-                      <span className="text-xs text-zinc-500">Downloads {(form.serverName || "host").replace(/[^a-zA-Z0-9]/g, "") || "host"}.txt</span>
+                      <span className="text-xs text-zinc-500">Downloads {(form.hostFileName || "host").replace(/[^a-zA-Z0-9]/g, "") || "host"}.txt</span>
                     ) : (
                       <input className="input flex-1 font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="Button URL" />
                     )}

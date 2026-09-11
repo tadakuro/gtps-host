@@ -45,6 +45,7 @@ export interface ServerData {
   socialLinks: SocialLink[];
   downloadHeading: string;
   downloadCards: DownloadCard[];
+  hostFileName: string;
   showHostFileSection: boolean;
   showPcSection: boolean;
   pcNote: string;

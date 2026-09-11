@@ -26,7 +26,7 @@ export default async function HomePage() {
     process.env.NEXT_PUBLIC_SITE_URL ??
     `${protocol}://${host.replace(/:\d+$/, "")}`;
   const hostFileUrl = `${siteUrl.replace(/\/$/, "")}/r/host.txt`;
-  const hostFileName = buildHostFileName(data.serverName);
+  const hostFileName = buildHostFileName(data.hostFileName || data.serverName);
 
   return (
     <>
