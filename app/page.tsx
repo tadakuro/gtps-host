@@ -105,7 +105,7 @@ export default async function HomePage() {
                       </p>
                     )}
 
-                    {card.buttons.map((btn, j) => (
+                    {card.buttons.filter((b) => b.url.trim()).map((btn, j) => (
                       <a
                         key={`btn-${i}-${j}`}
                         href={btn.url}
