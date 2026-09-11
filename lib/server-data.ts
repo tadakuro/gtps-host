@@ -54,7 +54,7 @@ function normalizeSocialLinks(raw: unknown): SocialLink[] {
     if (!item || typeof item !== "object") return null;
     const s = item as Record<string, unknown>;
 return {
-      iconUrl: str(s.iconUrl).trim(),
+      type: ["link", "host", "copylink"].includes(s.type) ? (s.type as DownloadButton["type"]) : "link",
       label: str(s.label).trim(),
       url: str(s.url).trim(),
     };

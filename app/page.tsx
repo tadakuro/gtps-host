@@ -116,6 +116,13 @@ export default async function HomePage() {
                         >
                           {btn.label}
                         </a>
+                      ) : btn.type === "copylink" ? (
+                        <CopyButton
+                          key={`btn-${i}-${j}`}
+                          textToCopy={hostFileUrl}
+                          label={btn.label || "Copy Host Link"}
+                          className="mb-3 block"
+                        />
                       ) : btn.url.trim() ? (
                         <a
                           key={`btn-${i}-${j}`}

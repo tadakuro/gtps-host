@@ -439,10 +439,13 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
                     <select className="input w-auto shrink-0" value={btn.type} onChange={(e) => updateBtn(ci, bi, "type", e.target.value)}>
                       <option value="link">Link</option>
                       <option value="host">Download Host file</option>
+                      <option value="copylink">Copy Host Link</option>
                     </select>
                     <input className="input flex-1" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Button label" />
                     {btn.type === "host" ? (
                       <span className="text-xs text-zinc-500">Downloads {(form.hostFileName || "host").replace(/[^a-zA-Z0-9]/g, "") || "host"}.txt</span>
+                    ) : btn.type === "copylink" ? (
+                      <span className="text-xs text-zinc-500">Copies the host.txt URL</span>
                     ) : (
                       <input className="input flex-1 font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="Button URL" />
                     )}
