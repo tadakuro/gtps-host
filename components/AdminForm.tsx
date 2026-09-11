@@ -1,17 +1,20 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { ServerData, ServerStatus } from "@/lib/types";
+import type {
+  ServerData,
+  ServerStatus,
+  SocialLink,
+  DownloadCard,
+  DownloadButton,
+} from "@/lib/types";
 
 const STATUSES: ServerStatus[] = ["Online", "Offline", "Maintenance"];
-
-interface AdminFormProps {
-  token: string;
-  initial: ServerData;
-}
+const BG_TYPES = ["none", "video", "image"] as const;
 
 interface FormState {
   serverName: string;
+  tagline: string;
   status: ServerStatus;
   description: string;
   ip: string;
@@ -19,11 +22,24 @@ interface FormState {
   version: string;
   features: string;
   hosts: string;
+  bgType: string;
+  bgMediaUrl: string;
+  bgOpacity: string;
+  eyeEnabled: boolean;
+  eyeImageUrl: string;
+  speechText: string;
+  socialLinks: SocialLink[];
+  downloadHeading: string;
+  downloadCards: DownloadCard[];
+  showPcSection: boolean;
+  pcNote: string;
+  footerNote: string;
 }
 
 function toFormState(data: ServerData): FormState {
   return {
     serverName: data.serverName,
+    tagline: data.tagline,
     status: data.status,
     description: data.description,
     ip: data.ip,
@@ -31,7 +47,68 @@ function toFormState(data: ServerData): FormState {
     version: data.version,
     features: data.features.join("\n"),
     hosts: data.hosts.join("\n"),
+    bgType: data.background.type,
+    bgMediaUrl: data.background.mediaUrl,
+    bgOpacity: String(data.background.overlayOpacity),
+    eyeEnabled: data.eyeEnabled,
+    eyeImageUrl: data.eyeImageUrl,
+    speechText: data.speechText,
+    socialLinks: data.socialLinks.map((l) => ({ ...l })),
+    downloadHeading: data.downloadHeading,
+    downloadCards: data.downloadCards.map((c) => ({
+      ...c,
+      buttons: c.buttons.map((b) => ({ ...b })),
+    })),
+    showPcSection: data.showPcSection,
+    pcNote: data.pcNote,
+    footerNote: data.footerNote,
   };
+}
+
+function toPayload(form: FormState): ServerData {
+  return {
+    serverName: form.serverName.trim(),
+    tagline: form.tagline.trim(),
+    status: form.status,
+    description: form.description.trim(),
+    ip: form.ip.trim(),
+    port: Math.max(1, Math.floor(Number(form.port) || 17091)),
+    version: form.version.trim(),
+    features: form.features
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    hosts: form.hosts
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    background: {
+      type: form.bgType as "video" | "image" | "none",
+      mediaUrl: form.bgMediaUrl.trim(),
+      overlayOpacity: Math.max(0, Math.min(100, Number(form.bgOpacity) || 55)),
+    },
+    eyeEnabled: form.eyeEnabled,
+    eyeImageUrl: form.eyeImageUrl.trim(),
+    speechText: form.speechText.trim(),
+    socialLinks: form.socialLinks.filter((l) => l.label || l.url),
+    downloadHeading: form.downloadHeading.trim() || "Download",
+    downloadCards: form.downloadCards.filter((c) => c.title),
+    showPcSection: form.showPcSection,
+    pcNote: form.pcNote.trim(),
+    footerNote: form.footerNote.trim(),
+  };
+}
+
+function emptyCard(): DownloadCard {
+  return { title: "", subtitle: "", note: "", copyText: "", buttons: [] };
+}
+function emptyButton(): DownloadButton {
+  return { label: "", url: "" };
+}
+
+interface AdminFormProps {
+  token: string;
+  initial: ServerData;
 }
 
 export default function AdminForm({ token, initial }: AdminFormProps) {
@@ -49,28 +126,99 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
     []
   );
 
+  // Social link helpers
+  const updateSocial = useCallback(
+    (i: number, field: keyof SocialLink, val: string) => {
+      setForm((f) => {
+        const copy = f.socialLinks.map((l) => ({ ...l }));
+        copy[i] = { ...copy[i], [field]: val };
+        return { ...f, socialLinks: copy };
+      });
+    },
+    []
+  );
+  const addSocial = useCallback(() => {
+    setForm((f) => ({
+      ...f,
+      socialLinks: [...f.socialLinks, { label: "", url: "", iconUrl: "" }],
+    }));
+  }, []);
+  const removeSocial = useCallback((i: number) => {
+    setForm((f) => ({
+      ...f,
+      socialLinks: f.socialLinks.filter((_, idx) => idx !== i),
+    }));
+  }, []);
+
+  // Card helpers
+  const updateCard = useCallback(
+    (i: number, field: keyof DownloadCard, val: string | boolean) => {
+      setForm((f) => {
+        const copy = f.downloadCards.map((c) => ({
+          ...c,
+          buttons: c.buttons.map((b) => ({ ...b })),
+        }));
+        (copy[i] as Record<string, unknown>)[field] = val;
+        return { ...f, downloadCards: copy };
+      });
+    },
+    []
+  );
+  const addCard = useCallback(() => {
+    setForm((f) => ({
+      ...f,
+      downloadCards: [...f.downloadCards, emptyCard()],
+    }));
+  }, []);
+  const removeCard = useCallback((i: number) => {
+    setForm((f) => ({
+      ...f,
+      downloadCards: f.downloadCards.filter((_, idx) => idx !== i),
+    }));
+  }, []);
+
+  // Button helpers per card
+  const updateBtn = useCallback(
+    (ci: number, bi: number, field: keyof DownloadButton, val: string) => {
+      setForm((f) => {
+        const copy = f.downloadCards.map((c) => ({
+          ...c,
+          buttons: c.buttons.map((b) => ({ ...b })),
+        }));
+        copy[ci].buttons[bi] = { ...copy[ci].buttons[bi], [field]: val };
+        return { ...f, downloadCards: copy };
+      });
+    },
+    []
+  );
+  const addBtn = useCallback((ci: number) => {
+    setForm((f) => {
+      const copy = f.downloadCards.map((c) => ({
+        ...c,
+        buttons: c.buttons.map((b) => ({ ...b })),
+      }));
+      copy[ci].buttons.push(emptyButton());
+      return { ...f, downloadCards: copy };
+    });
+  }, []);
+  const removeBtn = useCallback((ci: number, bi: number) => {
+    setForm((f) => {
+      const copy = f.downloadCards.map((c) => ({
+        ...c,
+        buttons: c.buttons.map((b) => ({ ...b })),
+      }));
+      copy[ci].buttons = copy[ci].buttons.filter((_, idx) => idx !== bi);
+      return { ...f, downloadCards: copy };
+    });
+  }, []);
+
   const submit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       setSaving(true);
       setResult(null);
 
-      const payload: ServerData = {
-        serverName: form.serverName.trim(),
-        status: form.status,
-        description: form.description.trim(),
-        ip: form.ip.trim(),
-        port: Math.max(1, Math.floor(Number(form.port) || 17091)),
-        version: form.version.trim(),
-        features: form.features
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        hosts: form.hosts
-          .split("\n")
-          .map((s) => s.trim())
-          .filter(Boolean),
-      };
+      const payload = toPayload(form);
 
       try {
         const res = await fetch("/api/admin/update", {
@@ -85,16 +233,13 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
         if (res.ok) {
           setResult({
             kind: "success",
-            message:
-              (json as { message?: string }).message ??
-              "Saved successfully.",
+            message: (json as { message?: string }).message ?? "Saved successfully.",
           });
           setForm(toFormState(payload));
         } else {
           setResult({
             kind: "error",
-            message:
-              (json as { error?: string }).error ?? "Update failed.",
+            message: (json as { error?: string }).error ?? "Update failed.",
           });
         }
       } catch {
@@ -106,132 +251,176 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
     [form, token]
   );
 
+  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div className="mb-8">
+      <h3 className="mb-4 border-b border-white/10 pb-2 text-lg font-bold text-neon font-orbitron">
+        {title}
+      </h3>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+
   return (
     <form className="min-w-0" onSubmit={submit}>
-      <div className="space-y-5">
+      {/* Branding */}
+      <Section title="Branding">
         <div>
-          <label className="label" htmlFor="serverName">
-            Server name
-          </label>
-          <input
-            className="input"
-            id="serverName"
-            type="text"
-            value={form.serverName}
-            onChange={(e) => set("serverName", e.target.value)}
-            required
-          />
+          <label className="label" htmlFor="serverName">Server Name</label>
+          <input className="input" id="serverName" value={form.serverName} onChange={(e) => set("serverName", e.target.value)} required />
         </div>
-
-        <div className="grid gap-5 sm:grid-cols-3">
+        <div>
+          <label className="label" htmlFor="tagline">Tagline</label>
+          <input className="input" id="tagline" value={form.tagline} onChange={(e) => set("tagline", e.target.value)} placeholder="SEASON 3 - PRIVATE SERVER" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="label" htmlFor="status">
-              Status
-            </label>
-            <select
-              className="input"
-              id="status"
-              value={form.status}
-              onChange={(e) => set("status", e.target.value as ServerStatus)}
-            >
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
+            <label className="label" htmlFor="status">Status</label>
+            <select className="input" id="status" value={form.status} onChange={(e) => set("status", e.target.value as ServerStatus)}>
+              {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
-
           <div>
-            <label className="label" htmlFor="ip">
-              IP address
-            </label>
-            <input
-              className="input font-mono"
-              id="ip"
-              type="text"
-              value={form.ip}
-              onChange={(e) => set("ip", e.target.value)}
-              required
-            />
+            <label className="label" htmlFor="version">Version</label>
+            <input className="input" id="version" value={form.version} onChange={(e) => set("version", e.target.value)} />
           </div>
-
           <div>
-            <label className="label" htmlFor="port">
-              Port
-            </label>
-            <input
-              className="input font-mono"
-              id="port"
-              type="number"
-              min={1}
-              max={65535}
-              value={form.port}
-              onChange={(e) => set("port", e.target.value)}
-            />
+            <label className="label" htmlFor="description">Description / Welcome text</label>
+            <input className="input" id="description" value={form.description} onChange={(e) => set("description", e.target.value)} />
           </div>
         </div>
-
         <div>
-          <label className="label" htmlFor="version">
-            Version
-          </label>
-          <input
-            className="input"
-            id="version"
-            type="text"
-            value={form.version}
-            onChange={(e) => set("version", e.target.value)}
-          />
+          <label className="label" htmlFor="features">Features (one per line)</label>
+          <textarea className="input font-mono text-sm" id="features" rows={3} value={form.features} onChange={(e) => set("features", e.target.value)} placeholder={"Custom World\nDaily Quest\n24/7 Uptime"} />
         </div>
-
         <div>
-          <label className="label" htmlFor="description">
-            Description
-          </label>
-          <textarea
-            className="input resize-y"
-            id="description"
-            rows={3}
-            value={form.description}
-            onChange={(e) => set("description", e.target.value)}
-          />
+          <label className="label" htmlFor="footerNote">Footer Note</label>
+          <input className="input" id="footerNote" value={form.footerNote} onChange={(e) => set("footerNote", e.target.value)} />
         </div>
+      </Section>
 
+      {/* Server */}
+      <Section title="Server Info">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="label" htmlFor="ip">IP Address</label>
+            <input className="input font-mono" id="ip" value={form.ip} onChange={(e) => set("ip", e.target.value)} required />
+          </div>
+          <div>
+            <label className="label" htmlFor="port">Port</label>
+            <input className="input font-mono" id="port" type="number" min={1} max={65535} value={form.port} onChange={(e) => set("port", e.target.value)} />
+          </div>
+        </div>
         <div>
-          <label className="label" htmlFor="features">
-            Features (one per line)
-          </label>
-          <textarea
-            className="input resize-y font-mono text-sm"
-            id="features"
-            rows={3}
-            value={form.features}
-            onChange={(e) => set("features", e.target.value)}
-            placeholder={"Custom World\nDaily Quest"}
-          />
+          <label className="label" htmlFor="hosts">Hosts (one per line)</label>
+          <textarea className="input font-mono text-sm" id="hosts" rows={4} value={form.hosts} onChange={(e) => set("hosts", e.target.value)} placeholder={"growtopia1.com\nwww.growtopia1.com"} />
         </div>
+        <div className="mt-3 flex items-center gap-3">
+          <input className="h-4 w-4 accent-neon" id="showPcSection" type="checkbox" checked={form.showPcSection} onChange={(e) => set("showPcSection", e.target.checked)} />
+          <label className="label mb-0" htmlFor="showPcSection">Show Windows &amp; macOS section</label>
+        </div>
+        {form.showPcSection && (
+          <div>
+            <label className="label" htmlFor="pcNote">PC Section Note</label>
+            <input className="input" id="pcNote" value={form.pcNote} onChange={(e) => set("pcNote", e.target.value)} placeholder="Optional note above host entries" />
+          </div>
+        )}
+      </Section>
 
+      {/* Background */}
+      <Section title="Background">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <label className="label" htmlFor="bgType">Type</label>
+            <select className="input" id="bgType" value={form.bgType} onChange={(e) => set("bgType", e.target.value)}>
+              {BG_TYPES.map((t) => <option key={t} value={t}>{t === "none" ? "None" : t === "video" ? "Video" : "Image"}</option>)}
+            </select>
+          </div>
+          <div className="sm:col-span-2">
+            <label className="label" htmlFor="bgMediaUrl">Media URL (video .mp4 or image)</label>
+            <input className="input font-mono" id="bgMediaUrl" value={form.bgMediaUrl} onChange={(e) => set("bgMediaUrl", e.target.value)} placeholder="https://..." disabled={form.bgType === "none"} />
+          </div>
+        </div>
+        {form.bgType !== "none" && (
+          <div>
+            <label className="label" htmlFor="bgOpacity">Overlay Darkness: {form.bgOpacity}%</label>
+            <input className="w-full accent-neon" id="bgOpacity" type="range" min={0} max={90} value={form.bgOpacity} onChange={(e) => set("bgOpacity", e.target.value)} />
+          </div>
+        )}
+      </Section>
+
+      {/* Eye & Speech */}
+      <Section title="Eye Mascot & Speech Bubble">
+        <div className="flex items-center gap-3">
+          <input className="h-4 w-4 accent-neon" id="eyeEnabled" type="checkbox" checked={form.eyeEnabled} onChange={(e) => set("eyeEnabled", e.target.checked)} />
+          <label className="label mb-0" htmlFor="eyeEnabled">Show Eye Mascot</label>
+        </div>
+        {form.eyeEnabled && (
+          <>
+            <div>
+              <label className="label" htmlFor="eyeImageUrl">Eye Image URL (optional, leave blank for CSS default)</label>
+              <input className="input font-mono" id="eyeImageUrl" value={form.eyeImageUrl} onChange={(e) => set("eyeImageUrl", e.target.value)} placeholder="https://... (optional)" />
+            </div>
+            <div>
+              <label className="label" htmlFor="speechText">Speech Bubble Text</label>
+              <input className="input" id="speechText" value={form.speechText} onChange={(e) => set("speechText", e.target.value)} placeholder="Halo! Welcome to the server!" />
+            </div>
+          </>
+        )}
+      </Section>
+
+      {/* Social Links */}
+      <Section title="Social Links">
+        {form.socialLinks.map((link, i) => (
+          <div key={`soc-${i}`} className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-[1fr_2fr_auto]">
+            <input className="input" value={link.label} onChange={(e) => updateSocial(i, "label", e.target.value)} placeholder="Label (e.g. Join Discord)" />
+            <input className="input font-mono" value={link.url} onChange={(e) => updateSocial(i, "url", e.target.value)} placeholder="https://..." />
+            <button type="button" className="rounded-lg bg-red-500/20 px-3 py-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeSocial(i)}>Remove</button>
+          </div>
+        ))}
+        <button type="button" className="btn-secondary" onClick={addSocial}>+ Add Social Link</button>
+      </Section>
+
+      {/* Download Cards */}
+      <Section title="Download Cards">
         <div>
-          <label className="label" htmlFor="hosts">
-            Hosts (one per line)
-          </label>
-          <textarea
-            className="input resize-y font-mono text-sm"
-            id="hosts"
-            rows={4}
-            value={form.hosts}
-            onChange={(e) => set("hosts", e.target.value)}
-            placeholder={"growtopia1.com\nwww.growtopia1.com"}
-          />
+          <label className="label" htmlFor="downloadHeading">Section Heading</label>
+          <input className="input" id="downloadHeading" value={form.downloadHeading} onChange={(e) => set("downloadHeading", e.target.value)} />
         </div>
-      </div>
+        {form.downloadCards.map((card, ci) => (
+          <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-semibold text-neon">Card {ci + 1}</span>
+              <button type="button" className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeCard(ci)}>Remove Card</button>
+            </div>
+            <div className="space-y-3">
+              <input className="input" value={card.title} onChange={(e) => updateCard(ci, "title", e.target.value)} placeholder="Title (e.g. APK VELQUIN)" />
+              <input className="input" value={card.subtitle} onChange={(e) => updateCard(ci, "subtitle", e.target.value)} placeholder="Subtitle (optional)" />
+              <input className="input" value={card.note} onChange={(e) => updateCard(ci, "note", e.target.value)} placeholder="Note text (optional)" />
+              <input className="input font-mono" value={card.copyText} onChange={(e) => updateCard(ci, "copyText", e.target.value)} placeholder="Copy-able text (optional, shown in dashed box)" />
+              {/* Buttons per card */}
+              <div className="mt-2">
+                <p className="mb-2 text-xs text-zinc-500">Buttons</p>
+                {card.buttons.map((btn, bi) => (
+                  <div key={`dbtn-${ci}-${bi}`} className="mb-2 flex gap-2">
+                    <input className="input" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Button label" />
+                    <input className="input font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="Button URL" />
+                    <button type="button" className="shrink-0 rounded-lg bg-red-500/20 px-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeBtn(ci, bi)}>✕</button>
+                  </div>
+                ))}
+                <button type="button" className="text-sm text-neon hover:underline" onClick={() => addBtn(ci)}>+ Add Button</button>
+              </div>
+            </div>
+          </div>
+        ))}
+        <button type="button" className="btn-secondary" onClick={addCard}>+ Add Download Card</button>
+      </Section>
 
+      {/* Result message */}
       {result && (
         <div
-          className={`mt-5 rounded-xl border px-4 py-3 text-sm ${
+          className={`mb-6 rounded-xl border px-4 py-3 text-sm ${
             result.kind === "success"
-              ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+              ? "border-neon/30 bg-neon/10 text-neon"
               : "border-red-400/30 bg-red-500/10 text-red-300"
           }`}
           role="status"
@@ -240,21 +429,17 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
         </div>
       )}
 
-      <div className="mt-6">
-        <button
-          className="btn-primary w-full sm:w-auto"
-          disabled={saving}
-          type="submit"
-        >
+      {/* Submit */}
+      <div className="mb-6">
+        <button className="btn-primary w-full sm:w-auto" disabled={saving} type="submit">
           {saving ? "Saving…" : "Save changes"}
         </button>
       </div>
 
-      <p className="mt-4 text-xs text-zinc-600">
+      <p className="text-xs text-zinc-600">
         Tip: on Cloudflare Pages the file is read-only at runtime. Save while
-        running the site locally, commit the new{" "}
-        <code>app/data/server.json</code>, and push to redeploy — or configure
-        <code> DEPLOY_WEBHOOK_URL</code>.
+        running locally, commit <code>app/data/server.json</code>, and push to
+        redeploy — or configure <code>DEPLOY_WEBHOOK_URL</code>.
       </p>
     </form>
   );

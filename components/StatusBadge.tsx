@@ -1,13 +1,13 @@
 import type { ServerStatus } from "@/lib/types";
 
 const STYLES: Record<ServerStatus, string> = {
-  Online: "bg-emerald-500/10 text-emerald-300 ring-emerald-400/40",
+  Online: "bg-neon/10 text-neon ring-neon/40",
   Offline: "bg-red-500/10 text-red-300 ring-red-400/40",
   Maintenance: "bg-amber-500/10 text-amber-300 ring-amber-400/40",
 };
 
 const DOT: Record<ServerStatus, string> = {
-  Online: "bg-emerald-400",
+  Online: "bg-neon",
   Offline: "bg-red-400",
   Maintenance: "bg-amber-400",
 };

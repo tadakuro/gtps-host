@@ -1,17 +1,81 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { ServerData, ServerStatus } from "./types";
+import type { ServerData, ServerStatus, BackgroundConfig, BackgroundType, SocialLink, DownloadCard } from "./types";
 import serverJson from "@/app/data/server.json";
 
 const DATA_FILE = path.join(process.cwd(), "app", "data", "server.json");
 const BUNDLED_DATA = serverJson as ServerData;
 
 const STATUSES: ServerStatus[] = ["Online", "Offline", "Maintenance"];
+const BG_TYPES: BackgroundType[] = ["video", "image", "none"];
 const MAX_ARRAY = 50;
+
+function str(v: unknown): string {
+  return typeof v === "string" ? v : "";
+}
+function num(v: unknown, fallback: number): number {
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+function bool(v: unknown): boolean {
+  return v === true || v === "true";
+}
+function strList(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter((x) => typeof x === "string").slice(0, MAX_ARRAY) as string[];
+}
+
+function normalizeBackground(raw: unknown): BackgroundConfig {
+  const base: BackgroundConfig = { type: "none", mediaUrl: "", overlayOpacity: 55 };
+  if (!raw || typeof raw !== "object") return base;
+  const s = raw as Record<string, unknown>;
+  const type = BG_TYPES.includes(s.type as BackgroundType) ? (s.type as BackgroundType) : "none";
+  return {
+    type,
+    mediaUrl: str(s.mediaUrl),
+    overlayOpacity: Math.max(0, Math.min(100, num(s.overlayOpacity, 55))),
+  };
+}
+
+function normalizeSocialLinks(raw: unknown): SocialLink[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 20).map((item) => {
+    if (!item || typeof item !== "object") return null;
+    const s = item as Record<string, unknown>;
+    return {
+      label: str(s.label),
+      url: str(s.url),
+      iconUrl: str(s.iconUrl),
+    };
+  }).filter((x): x is SocialLink => x !== null && Boolean(x.label || x.url));
+}
+
+function normalizeDownloadCards(raw: unknown): DownloadCard[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, 10).map((item) => {
+    if (!item || typeof item !== "object") return null;
+    const s = item as Record<string, unknown>;
+    const buttons = Array.isArray(s.buttons)
+      ? (s.buttons as unknown[]).slice(0, 10).map((b) => {
+          if (!b || typeof b !== "object") return null;
+          const bs = b as Record<string, unknown>;
+          return { label: str(bs.label), url: str(bs.url) };
+        }).filter((x): x is { label: string; url: string } => x !== null && Boolean(x.label || x.url))
+      : [];
+    return {
+      title: str(s.title),
+      subtitle: str(s.subtitle),
+      note: str(s.note),
+      copyText: str(s.copyText),
+      buttons,
+    };
+  }).filter((x): x is DownloadCard => x !== null && Boolean(x.title));
+}
 
 export function normalizeData(raw: unknown): ServerData {
   const base: ServerData = {
     serverName: "My GTPS Server",
+    tagline: "",
     status: "Online",
     description: "",
     ip: "0.0.0.0",
@@ -19,33 +83,48 @@ export function normalizeData(raw: unknown): ServerData {
     version: "4.98",
     features: [],
     hosts: [],
+    background: { type: "none", mediaUrl: "", overlayOpacity: 55 },
+    eyeEnabled: false,
+    eyeImageUrl: "",
+    speechText: "",
+    socialLinks: [],
+    downloadHeading: "Download",
+    downloadCards: [],
+    showPcSection: true,
+    pcNote: "",
+    footerNote: "Not affiliated with Ubisoft. Growtopia is a trademark of Ubisoft.",
   };
 
   if (!raw || typeof raw !== "object") return base;
   const src = raw as Record<string, unknown>;
-
-  const str = (v: unknown): string => (typeof v === "string" ? v : "");
-  const strList = (v: unknown): string[] =>
-    Array.isArray(v)
-      ? v.filter((x): x is string => typeof x === "string").slice(0, MAX_ARRAY)
-      : [];
 
   let status: ServerStatus = "Online";
   if (STATUSES.includes(src.status as ServerStatus)) {
     status = src.status as ServerStatus;
   }
 
-  const port = typeof src.port === "number" ? src.port : Number(src.port);
+  const port = num(src.port, 17091);
 
   return {
     serverName: str(src.serverName).trim() || base.serverName,
+    tagline: str(src.tagline).trim(),
     status,
     description: str(src.description).trim(),
     ip: str(src.ip).trim() || base.ip,
-    port: Number.isFinite(port) ? port : base.port,
+    port: Math.max(1, Math.floor(port)),
     version: str(src.version).trim() || base.version,
     features: strList(src.features),
     hosts: strList(src.hosts),
+    background: normalizeBackground(src.background),
+    eyeEnabled: bool(src.eyeEnabled),
+    eyeImageUrl: str(src.eyeImageUrl),
+    speechText: str(src.speechText),
+    socialLinks: normalizeSocialLinks(src.socialLinks),
+    downloadHeading: str(src.downloadHeading).trim() || "Download",
+    downloadCards: normalizeDownloadCards(src.downloadCards),
+    showPcSection: bool(src.showPcSection),
+    pcNote: str(src.pcNote).trim(),
+    footerNote: str(src.footerNote).trim() || base.footerNote,
   };
 }
 

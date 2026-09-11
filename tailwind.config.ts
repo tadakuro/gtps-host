@@ -9,10 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        neon: {
+          DEFAULT: "#00ff88",
+          dark: "#00cc66",
+          light: "#00ffaa",
+        },
         night: {
-          900: "#0a0e17",
-          800: "#101625",
-          700: "#1a2338",
+          900: "#0a0a0a",
+          800: "#0f0f0f",
+          700: "#1a1a1a",
         },
       },
     },

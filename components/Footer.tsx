@@ -1,13 +1,13 @@
+import { getServerData } from "@/lib/server-data";
+
 export default function Footer() {
+  const data = getServerData();
+  const note = data.footerNote || "Not affiliated with Ubisoft. Growtopia is a trademark of Ubisoft.";
+
   return (
-    <footer className="border-t border-white/5 py-8">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-1 px-4 text-center sm:px-6">
-        <p className="text-sm text-zinc-400">Not affiliated with Ubisoft</p>
-        <p className="text-xs text-zinc-600">
-          Growtopia is a trademark of Ubisoft. This is a community-run private
-          server resource.
-        </p>
-      </div>
+    <footer className="border-t-2 border-neon bg-black/90 py-12 text-center">
+      <p className="text-zinc-400">&copy; 2026 {data.serverName}</p>
+      <p className="mt-1 text-xs text-zinc-600">{note}</p>
     </footer>
   );
 }

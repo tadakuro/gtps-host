@@ -1,10 +1,11 @@
 {
-  "serverName": "NexusGTPS",
+  "serverName": "VELQUINTOPIA",
+  "tagline": "SEASON 3 - PRIVATE SERVER",
   "status": "Online",
-  "description": "Best GTPS 2026",
-  "ip": "162.19.242.225",
+  "description": "Welcome to VelQuinTopia!",
+  "ip": "91.134.85.13",
   "port": 17091,
-  "version": "4.98",
+  "version": "5.48",
   "features": [
     "Custom World",
     "Daily Quest",
@@ -16,5 +17,66 @@
     "www.growtopia1.com",
     "growtopia2.com",
     "www.growtopia2.com"
-  ]
+  ],
+  "background": {
+    "type": "video",
+    "mediaUrl": "https://www.image2url.com/r2/default/videos/1779344230064-24555951-16e6-4ca7-8726-bf50238f8f18.mp4",
+    "overlayOpacity": 55
+  },
+  "eyeEnabled": true,
+  "eyeImageUrl": "",
+  "speechText": "Halo! Welcome to VelQuinTopia! Play now!",
+  "socialLinks": [
+    {
+      "label": "Join Discord",
+      "url": "https://discord.gg/example",
+      "iconUrl": "https://cdn.phototourl.com/free/2026-05-20-de4133b5-2d60-4520-9a15-8b66a5fc5f9d.png"
+    },
+    {
+      "label": "Join WhatsApp",
+      "url": "https://chat.whatsapp.com/example",
+      "iconUrl": "https://cdn.phototourl.com/free/2026-05-20-c132fb44-91d7-48dd-a8fd-0f132a91e35b.png"
+    }
+  ],
+  "downloadHeading": "Download host di bawah",
+  "downloadCards": [
+    {
+      "title": "APK VELQUIN [terbaru v5.48]",
+      "subtitle": "",
+      "note": "",
+      "copyText": "",
+      "buttons": [
+        {
+          "label": "Download APK",
+          "url": "https://example.com/apk"
+        }
+      ]
+    },
+    {
+      "title": "iOS",
+      "subtitle": "",
+      "note": "SALIN HOST PTUNEL DI BAWAH INI",
+      "copyText": "",
+      "buttons": [
+        {
+          "label": "Host iOS",
+          "url": "https://example.com/ios-host"
+        },
+        {
+          "label": "Download Vhost",
+          "url": "https://example.com/vhost.txt"
+        }
+      ]
+    },
+    {
+      "title": "Windows & macOS",
+      "subtitle": "",
+      "note": "",
+      "copyText": "",
+      "buttons": []
+    }
+  ],
+  "showPcSection": false,
+  "pcNote": "",
+  "footerNote": "Velquintopia - Server By @MalDev"
 }

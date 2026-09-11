@@ -4,34 +4,97 @@
 
 :root {
   color-scheme: dark;
+  --neon: #00ff88;
+  --neon-dark: #00cc66;
+  --neon-light: #00ffaa;
 }
 
 body {
-  @apply bg-night-900 text-zinc-100 antialiased;
+  @apply text-white antialiased;
+  background: #0a0a0a;
 }
 
 ::selection {
-  @apply bg-emerald-500/30 text-white;
+  background: rgba(0, 255, 136, 0.3);
+  color: #fff;
+}
+
+.font-orbitron {
+  font-family: var(--font-orbitron), "Orbitron", sans-serif;
 }
 
 @layer components {
-  .card {
-    @apply rounded-2xl border border-white/10 bg-night-800/60 p-6 shadow-xl shadow-black/20;
+.card-glow {
+  @apply rounded-3xl border-2 border-neon bg-[rgba(15,15,15,0.85)] p-9 transition-all duration-300;
+}
+.card-glow:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+}
+
+  .btn-neon {
+    @apply inline-block rounded-full bg-gradient-to-br from-neon to-neon-dark px-8 py-3.5 font-bold text-black transition-all hover:-translate-y-1.5;
   }
 
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-night-900 transition hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300/60 disabled:cursor-not-allowed disabled:opacity-60;
+  .btn-social {
+    @apply flex items-center gap-3 rounded-full border-2 border-neon bg-black/70 px-7 py-3 font-semibold text-white transition-all hover:-translate-y-1.5 hover:bg-neon/10 hover:border-neon-light;
   }
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30;
+  .link-box {
+    @apply rounded-2xl border-2 border-dashed border-neon bg-black/75 p-[18px] text-[1.1rem] text-neon-light break-all;
   }
 
   .input {
-    @apply w-full rounded-xl border border-white/10 bg-night-900/70 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:border-emerald-400/60 focus:outline-none focus:ring-2 focus:ring-emerald-400/20;
+    @apply w-full rounded-xl border border-white/10 bg-night-900/70 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:border-neon/60 focus:outline-none focus:ring-2 focus:ring-neon/20;
   }
 
   .label {
     @apply mb-1.5 block text-sm font-medium text-zinc-300;
   }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-neon px-6 py-3 text-sm font-semibold text-black transition hover:bg-neon-dark focus:outline-none focus:ring-2 focus:ring-neon/60 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30;
+  }
 }
+
+/* Eye blink animation */
+@keyframes blink {
+  0%, 88%, 100% { clip-path: inset(0 0 0 0); }
+  90% { clip-path: inset(40% 0 45% 0); }
+  92% { clip-path: inset(0 0 0 0); }
+}
+
+/* Speech bubble show/hide */
+.speech-bubble {
+  position: fixed;
+  top: 185px;
+  right: 85px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #00ffaa;
+  padding: 14px 20px;
+  border-radius: 20px;
+  font-size: 1.02rem;
+  max-width: 260px;
+  box-shadow: 0 0 18px rgba(0, 255, 136, 0.4);
+  border: 2px solid #00ff88;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.6s ease;
+  z-index: 1000;
+  line-height: 1.45;
+}
+.speech-bubble.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-8px);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
