@@ -158,31 +158,33 @@ export default async function HomePage() {
         )}
 
         {/* Host File + Download */}
-        <section className="py-16">
-          <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
-            Host File
-          </h2>
-          <div className="card-glow text-left">
-            <p className="text-zinc-300">
-              Add the host file to your Growtopia installation directory, or use
-              the buttons below for a client / proxy that supports custom host
-              URLs.
-            </p>
+        {data.showHostFileSection && (
+          <section className="py-16">
+            <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
+              Host File
+            </h2>
+            <div className="card-glow text-left">
+              <p className="text-zinc-300">
+                Add the host file to your Growtopia installation directory, or use
+                the buttons below for a client / proxy that supports custom host
+                URLs.
+              </p>
 
-            <div className="link-box my-4 font-mono">
-              {hostFileUrl}
+              <div className="link-box my-4 font-mono">
+                {hostFileUrl}
+              </div>
+
+              <div className="mt-4">
+                <HostButtons />
+              </div>
+
+              <p className="mt-4 text-xs text-zinc-500">
+                Raw file also available without the <code>.txt</code> extension at{" "}
+                <code className="text-zinc-400">/r/host</code>.
+              </p>
             </div>
-
-            <div className="mt-4">
-              <HostButtons />
-            </div>
-
-            <p className="mt-4 text-xs text-zinc-500">
-              Raw file also available without the <code>.txt</code> extension at{" "}
-              <code className="text-zinc-400">/r/host</code>.
-            </p>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Features */}
         {data.features.length > 0 && (

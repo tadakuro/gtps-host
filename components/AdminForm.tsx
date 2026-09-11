@@ -31,6 +31,7 @@ interface FormState {
   socialLinks: SocialLink[];
   downloadHeading: string;
   downloadCards: DownloadCard[];
+  showHostFileSection: boolean;
   showPcSection: boolean;
   pcNote: string;
   footerNote: string;
@@ -59,6 +60,7 @@ function toFormState(data: ServerData): FormState {
       ...c,
       buttons: c.buttons.map((b) => ({ ...b })),
     })),
+    showHostFileSection: data.showHostFileSection,
     showPcSection: data.showPcSection,
     pcNote: data.pcNote,
     footerNote: data.footerNote,
@@ -93,6 +95,7 @@ function toPayload(form: FormState): ServerData {
     socialLinks: form.socialLinks.filter((l) => l.label || l.url),
     downloadHeading: form.downloadHeading.trim() || "Download",
     downloadCards: form.downloadCards.filter((c) => c.title),
+    showHostFileSection: form.showHostFileSection,
     showPcSection: form.showPcSection,
     pcNote: form.pcNote.trim(),
     footerNote: form.footerNote.trim(),
@@ -388,6 +391,15 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           <label className="label" htmlFor="downloadHeading">Section Heading</label>
           <input className="input" id="downloadHeading" value={form.downloadHeading} onChange={(e) => set("downloadHeading", e.target.value)} />
         </div>
+        <label className="flex items-start gap-2 text-xs text-zinc-400">
+          <input
+            type="checkbox"
+            className="mt-0.5"
+            checked={form.showHostFileSection}
+            onChange={(e) => set("showHostFileSection", e.target.checked)}
+          />
+          <span>Show Host File / host.txt section below cards</span>
+        </label>
         {form.downloadCards.map((card, ci) => (
           <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
             <div className="mb-3 flex items-center justify-between">

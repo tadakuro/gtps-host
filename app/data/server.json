@@ -76,6 +76,7 @@
       "buttons": []
     }
   ],
+  "showHostFileSection": false,
   "showPcSection": false,
   "pcNote": "",
   "footerNote": "Velquintopia - Server By @MalDev"
