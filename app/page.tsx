@@ -40,10 +40,10 @@ export default async function HomePage() {
         speechText={data.speechText || undefined}
       />
 
-      <div className="container mx-auto max-w-6xl px-5 py-8">
+      <div className="container mx-auto w-full max-w-6xl overflow-x-hidden px-5 py-8">
         {/* Hero */}
         <section className="py-24 text-center">
-          <h1 className="mb-5 text-[3.2rem] font-bold leading-tight text-transparent bg-gradient-to-r from-neon to-neon-light bg-clip-text font-orbitron">
+          <h1 className="mx-auto w-fit text-[clamp(1.8rem,8vw,3.2rem)] font-bold leading-tight text-transparent bg-gradient-to-r from-neon to-neon-light bg-clip-text font-orbitron">
             {data.description || `Welcome to ${data.serverName}!`}
           </h1>
 
@@ -81,11 +81,11 @@ export default async function HomePage() {
         {/* Downloads */}
         {data.downloadCards.length > 0 && (
           <section className="py-16">
-            <h2 className="mb-10 text-center font-orbitron text-[2.4rem] text-neon">
+            <h2 className="mb-10 text-center font-orbitron text-[clamp(1.6rem,6vw,2.4rem)] text-neon">
               {data.downloadHeading}
             </h2>
 
-            <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(340px,1fr))]">
+            <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))]">
               {data.downloadCards.map((card, i) => {
                 const copyText = card.hostBlock
                   ? buildPtunnelConfig(data)
@@ -178,7 +178,7 @@ export default async function HomePage() {
         {/* Android & PC Host */}
         {data.showPowerTunnelSection && (
           <section className="py-16">
-            <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
+            <h2 className="mb-6 text-center font-orbitron text-[clamp(1.3rem,5vw,2rem)] text-neon">
               Android &amp; PC Host
             </h2>
             <div className="card-glow text-left">
@@ -211,7 +211,7 @@ export default async function HomePage() {
         {/* iOS Host */}
         {data.showIosSection && (
           <section className="py-16">
-            <h2 className="mb-6 text-center font-orbitron text-[2rem] text-neon">
+            <h2 className="mb-6 text-center font-orbitron text-[clamp(1.3rem,5vw,2rem)] text-neon">
               iOS Host
             </h2>
             <div className="card-glow text-left">

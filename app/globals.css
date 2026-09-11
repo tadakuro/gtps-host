@@ -12,6 +12,7 @@
 body {
   @apply text-white antialiased;
   background: #0a0a0a;
+  overflow-x: hidden;
 }
 
 ::selection {
