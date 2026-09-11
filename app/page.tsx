@@ -183,27 +183,27 @@ export default async function HomePage() {
             </h2>
             <div className="card-glow text-left">
               <p className="text-zinc-300">
-                Use this config for PowerTunnel (iOS/Android) to route Growtopia
-                traffic to {data.ip}:{data.port}.
+                For PowerTunnel on Android / PC: add this hosts file URL in the
+                app settings to route Growtopia traffic to your server.
               </p>
 
-              <div className="link-box my-4 whitespace-pre-wrap font-mono text-sm">
-                {buildPtunnelConfig(data)}
-              </div>
+              <div className="link-box my-4 font-mono">{hostFileUrl}</div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
                   className="btn-neon"
-                  href="/r/powertunnel"
+                  href="/r/host.txt"
                   download={hostFileName}
                 >
-                  Download Config
+                  Download Host
                 </a>
-                <CopyButton
-                  textToCopy={buildPtunnelConfig(data)}
-                  label="Copy Config"
-                />
+                <CopyButton textToCopy={hostFileUrl} label="Copy Link" />
               </div>
+
+              <p className="mt-4 text-xs text-zinc-500">
+                Raw file also available at{" "}
+                <code className="text-zinc-400">/r/host</code>.
+              </p>
             </div>
           </section>
         )}
