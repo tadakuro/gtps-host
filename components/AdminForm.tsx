@@ -114,7 +114,7 @@ function emptyCard(): DownloadCard {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-8">
+    <div className="mb-6 rounded-2xl border border-white/10 bg-night-800 p-4 shadow-lg shadow-black/40 sm:p-5">
       <h3 className="mb-4 border-b border-white/10 pb-2 text-lg font-bold text-neon font-orbitron">
         {title}
       </h3>
@@ -382,7 +382,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       {/* Social Links */}
       <Section title="Social Buttons">
         {form.socialLinks.map((link, i) => (
-          <div key={`soc-${i}`} className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-[1fr_2fr_auto]">
+          <div key={`soc-${i}`} className="grid gap-3 rounded-xl border border-white/15 bg-white/[0.06] p-4 sm:grid-cols-[1fr_2fr_auto]">
             <input className="input" value={link.label} onChange={(e) => updateSocial(i, "label", e.target.value)} placeholder="Label-nya apa? misal: Join Discord" />
             <input className="input font-mono" value={link.url} onChange={(e) => updateSocial(i, "url", e.target.value)} placeholder="Link tujuan https://..." />
             <button type="button" className="rounded-lg bg-red-500/20 px-3 py-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeSocial(i)}>Hapus</button>
@@ -421,7 +421,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           <span>Buat aktifin bagian iOS Host (konfigurasi bypass) di bawah kartu, centang ini</span>
         </label>
         {form.downloadCards.map((card, ci) => (
-          <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+          <div key={`dcard-${ci}`} className="rounded-xl border border-white/15 bg-white/[0.06] p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-semibold text-neon">Card {ci + 1}</span>
               <button type="button" className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeCard(ci)}>Hapus Kartu</button>
