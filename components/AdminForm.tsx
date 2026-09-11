@@ -109,7 +109,7 @@ function toPayload(form: FormState): ServerData {
 }
 
 function emptyCard(): DownloadCard {
-  return { title: "", subtitle: "", note: "", copyText: "", hostBlock: false, buttons: [] };
+  return { title: "", subtitle: "", note: "", copyText: "", buttons: [] };
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -122,6 +122,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     </div>
   );
 }
+
 function emptyButton(): DownloadButton {
   return { type: "link", label: "", url: "" };
 }
@@ -256,11 +257,11 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
         } else {
           setResult({
             kind: "error",
-            message: (json as { error?: string }).error ?? "Gagal memperbarui.",
+            message: (json as { error?: string }).error ?? "Gagal update.",
           });
         }
       } catch {
-        setResult({ kind: "error", message: "Jaringan error." });
+        setResult({ kind: "error", message: "Gagal terhubung ke server." });
       } finally {
         setSaving(false);
       }
@@ -271,7 +272,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
   return (
     <form className="min-w-0" onSubmit={submit}>
       {/* Branding */}
-      <Section title="Branding">
+      <Section title="Tampilan & Identitas">
         <div>
           <label className="label" htmlFor="serverName">Nama Server</label>
           <input className="input" id="serverName" value={form.serverName} onChange={(e) => set("serverName", e.target.value)} required />
@@ -292,13 +293,13 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             <input className="input" id="version" value={form.version} onChange={(e) => set("version", e.target.value)} />
           </div>
           <div>
-            <label className="label" htmlFor="description">Deskripsi / Teks Sambutan</label>
+            <label className="label" htmlFor="description">Kata Sambutan</label>
             <input className="input" id="description" value={form.description} onChange={(e) => set("description", e.target.value)} />
           </div>
         </div>
         <div>
-          <label className="label" htmlFor="features">Fitur (satu per baris)</label>
-          <textarea className="input font-mono text-sm" id="features" rows={3} value={form.features} onChange={(e) => set("features", e.target.value)} placeholder={"Custom World\nMisi Harian\nUptime 24/7"} />
+          <label className="label" htmlFor="features">Fitur Server (satu baris satu fitur)</label>
+          <textarea className="input font-mono text-sm" id="features" rows={3} value={form.features} onChange={(e) => set("features", e.target.value)} placeholder={"Custom World\nMisi Harian\nUptime 24 jam"} />
         </div>
         <div>
           <label className="label" htmlFor="footerNote">Catatan Footer</label>
@@ -307,10 +308,10 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       </Section>
 
       {/* Server */}
-      <Section title="Info Server">
+      <Section title="Data Server">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="label" htmlFor="ip">Alamat IP</label>
+            <label className="label" htmlFor="ip">IP Server</label>
             <input className="input font-mono" id="ip" value={form.ip} onChange={(e) => set("ip", e.target.value)} required />
           </div>
           <div>
@@ -319,8 +320,9 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           </div>
         </div>
         <div>
-          <label className="label" htmlFor="hosts">Hosts (satu per baris)</label>
+          <label className="label" htmlFor="hosts">Hosts</label>
           <textarea className="input font-mono text-sm" id="hosts" rows={4} value={form.hosts} onChange={(e) => set("hosts", e.target.value)} placeholder={"growtopia1.com\nwww.growtopia1.com"} />
+          <p className="mt-1 text-xs text-zinc-500">Tulis satu host per baris, misal: growtopia1.com</p>
         </div>
         <div className="mt-3 flex items-center gap-3">
           <input className="h-4 w-4 accent-neon" id="showPcSection" type="checkbox" checked={form.showPcSection} onChange={(e) => set("showPcSection", e.target.checked)} />
@@ -328,14 +330,14 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
         </div>
         {form.showPcSection && (
           <div>
-            <label className="label" htmlFor="pcNote">Catatan Bagian PC</label>
-            <input className="input" id="pcNote" value={form.pcNote} onChange={(e) => set("pcNote", e.target.value)} placeholder="Catatan opsional di atas daftar host" />
+            <label className="label" htmlFor="pcNote">Catatan untuk bagian PC</label>
+            <input className="input" id="pcNote" value={form.pcNote} onChange={(e) => set("pcNote", e.target.value)} placeholder="Catatan opsional, muncul di atas daftar host" />
           </div>
         )}
       </Section>
 
       {/* Background */}
-      <Section title="Latar Belakang">
+      <Section title="Background">
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <label className="label" htmlFor="bgType">Tipe</label>
@@ -344,32 +346,32 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className="label" htmlFor="bgMediaUrl">URL Media (video .mp4 atau gambar)</label>
-            <input className="input font-mono" id="bgMediaUrl" value={form.bgMediaUrl} onChange={(e) => set("bgMediaUrl", e.target.value)} placeholder="https://..." disabled={form.bgType === "none"} />
+            <label className="label" htmlFor="bgMediaUrl">URL Media</label>
+            <input className="input font-mono" id="bgMediaUrl" value={form.bgMediaUrl} onChange={(e) => set("bgMediaUrl", e.target.value)} placeholder="https://... (link video .mp4 atau gambar)" disabled={form.bgType === "none"} />
           </div>
         </div>
         {form.bgType !== "none" && (
           <div>
-            <label className="label" htmlFor="bgOpacity">Kegelapan Overlay: {form.bgOpacity}%</label>
+            <label className="label" htmlFor="bgOpacity">Tingkat gelap overlay: {form.bgOpacity}%</label>
             <input className="w-full accent-neon" id="bgOpacity" type="range" min={0} max={90} value={form.bgOpacity} onChange={(e) => set("bgOpacity", e.target.value)} />
           </div>
         )}
       </Section>
 
       {/* Eye & Speech */}
-      <Section title="Maskot Mata & Gelembung Bicara">
+      <Section title="Maskot Mata &amp; Gelembung Teks">
         <div className="flex items-center gap-3">
           <input className="h-4 w-4 accent-neon" id="eyeEnabled" type="checkbox" checked={form.eyeEnabled} onChange={(e) => set("eyeEnabled", e.target.checked)} />
-          <label className="label mb-0" htmlFor="eyeEnabled">Tampilkan Maskot Mata</label>
+          <label className="label mb-0" htmlFor="eyeEnabled">Tampilkan maskot mata</label>
         </div>
         {form.eyeEnabled && (
           <>
             <div>
-              <label className="label" htmlFor="eyeImageUrl">URL Gambar Mata (opsional, kosongkan untuk default)</label>
-              <input className="input font-mono" id="eyeImageUrl" value={form.eyeImageUrl} onChange={(e) => set("eyeImageUrl", e.target.value)} placeholder="https://..." />
+              <label className="label" htmlFor="eyeImageUrl">Gambar maskot</label>
+              <input className="input font-mono" id="eyeImageUrl" value={form.eyeImageUrl} onChange={(e) => set("eyeImageUrl", e.target.value)} placeholder="URL gambar (opsional, kalau dikosongin pakai bawaan)" />
             </div>
             <div>
-              <label className="label" htmlFor="speechText">Teks Gelembung Bicara</label>
+              <label className="label" htmlFor="speechText">Isi gelembung teks</label>
               <input className="input" id="speechText" value={form.speechText} onChange={(e) => set("speechText", e.target.value)} placeholder="Halo! Selamat datang di server!" />
             </div>
           </>
@@ -377,19 +379,19 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       </Section>
 
       {/* Social Links */}
-      <Section title="Tautan Sosial">
+      <Section title="Tombol Sosial">
         {form.socialLinks.map((link, i) => (
           <div key={`soc-${i}`} className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-[1fr_2fr_auto]">
-            <input className="input" value={link.label} onChange={(e) => updateSocial(i, "label", e.target.value)} placeholder="Label (mis. Gabung Discord)" />
+            <input className="input" value={link.label} onChange={(e) => updateSocial(i, "label", e.target.value)} placeholder="Label (mis. Join Discord)" />
             <input className="input font-mono" value={link.url} onChange={(e) => updateSocial(i, "url", e.target.value)} placeholder="https://..." />
             <button type="button" className="rounded-lg bg-red-500/20 px-3 py-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeSocial(i)}>Hapus</button>
           </div>
         ))}
-        <button type="button" className="btn-secondary" onClick={addSocial}>+ Tambah Tautan Sosial</button>
+        <button type="button" className="btn-secondary" onClick={addSocial}>+ Tambah tombol sosial</button>
       </Section>
 
       {/* Download Cards */}
-      <Section title="Kartu Unduhan">
+      <Section title="Kartu Download">
         <div>
           <label className="label" htmlFor="downloadHeading">Judul Bagian</label>
           <input className="input" id="downloadHeading" value={form.downloadHeading} onChange={(e) => set("downloadHeading", e.target.value)} />
@@ -397,7 +399,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
         <div>
           <label className="label" htmlFor="hostFileName">Nama File Host</label>
           <input className="input font-mono" id="hostFileName" value={form.hostFileName} onChange={(e) => set("hostFileName", e.target.value)} placeholder="VelQuinTopia" />
-          <p className="mt-1 text-xs text-zinc-500">Nama file yang dipakai saat pengunjung mengunduh file host (mis. VelQuinTopia.txt)</p>
+          <p className="mt-1 text-xs text-zinc-500">Nama file yang didownload pengunjung, misal: VelQuinTopia.txt</p>
         </div>
         <label className="flex items-start gap-2 text-xs text-zinc-400">
           <input
@@ -406,7 +408,7 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
             checked={form.showPowerTunnelSection}
             onChange={(e) => set("showPowerTunnelSection", e.target.checked)}
           />
-          <span>Tampilkan bagian PowerTunnel (tautan file hosts) di bawah kartu</span>
+          <span>Tampilkan bagian PowerTunnel (tautan link host) di bawah kartu</span>
         </label>
         <label className="flex items-start gap-2 text-xs text-zinc-400">
           <input
@@ -421,52 +423,40 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
           <div key={`dcard-${ci}`} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-semibold text-neon">Kartu {ci + 1}</span>
-              <button type="button" className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeCard(ci)}>Hapus Kartu</button>
+              <button type="button" className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeCard(ci)}>Hapus kartu</button>
             </div>
             <div className="space-y-3">
-              <input className="input" value={card.title} onChange={(e) => updateCard(ci, "title", e.target.value)} placeholder="Judul (mis. APK VELQUIN)" />
+              <input className="input" value={card.title} onChange={(e) => updateCard(ci, "title", e.target.value)} placeholder="Judul kartu (mis. APK VELQUIN)" />
               <input className="input" value={card.subtitle} onChange={(e) => updateCard(ci, "subtitle", e.target.value)} placeholder="Subjudul (opsional)" />
-              <input className="input" value={card.note} onChange={(e) => updateCard(ci, "note", e.target.value)} placeholder="Teks catatan (opsional)" />
-              <input className="input font-mono" value={card.copyText} onChange={(e) => updateCard(ci, "copyText", e.target.value)} placeholder="Teks yang bisa disalin (opsional, muncul di kotak putus-putus)" />
-              <label className="flex items-start gap-2 text-xs text-zinc-400">
-                <input
-                  type="checkbox"
-                  className="mt-0.5"
-                  checked={card.hostBlock}
-                  onChange={(e) => updateCard(ci, "hostBlock", e.target.checked)}
-                />
-                <span>
-                  Otomatis buat konfigurasi host iOS dari field IP + hosts
-                  (mengabaikan teks di atas)
-                </span>
-              </label>
+              <input className="input" value={card.note} onChange={(e) => updateCard(ci, "note", e.target.value)} placeholder="Catatan kecil di kartu (opsional)" />
+              <input className="input font-mono" value={card.copyText} onChange={(e) => updateCard(ci, "copyText", e.target.value)} placeholder="Teks yang bisa disalin (muncul di kotak putus-putus, opsional)" />
               {/* Buttons per card */}
               <div className="mt-2">
                 <p className="mb-2 text-xs text-zinc-500">Tombol</p>
                 {card.buttons.map((btn, bi) => (
                   <div key={`dbtn-${ci}-${bi}`} className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center">
                     <select className="input w-auto shrink-0" value={btn.type} onChange={(e) => updateBtn(ci, bi, "type", e.target.value)}>
-                      <option value="link">Tautan</option>
-                      <option value="host">Unduh File Host</option>
-                      <option value="copylink">Salin Tautan Host</option>
+                      <option value="link">Link</option>
+                      <option value="host">Download file host</option>
+                      <option value="copylink">Salin link host</option>
                     </select>
-                    <input className="input flex-1" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Label tombol" />
+                    <input className="input flex-1" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Nama tombol" />
                     {btn.type === "host" ? (
-                      <span className="text-xs text-zinc-500">Mengunduh {(form.hostFileName || "host").replace(/[^a-zA-Z0-9]/g, "") || "host"}.txt</span>
+                      <span className="text-xs text-zinc-500">Download {(form.hostFileName || "host").replace(/[^a-zA-Z0-9]/g, "") || "host"}.txt</span>
                     ) : btn.type === "copylink" ? (
-                      <span className="text-xs text-zinc-500">Menyalin URL host.txt</span>
+                      <span className="text-xs text-zinc-500">Salin URL host.txt ke clipboard</span>
                     ) : (
-                      <input className="input flex-1 font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="URL tombol" />
+                      <input className="input flex-1 font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="Link URL" />
                     )}
                     <button type="button" className="shrink-0 rounded-lg bg-red-500/20 px-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeBtn(ci, bi)}>✕</button>
                   </div>
                 ))}
-                <button type="button" className="text-sm text-neon hover:underline" onClick={() => addBtn(ci)}>+ Tambah Tombol</button>
+                <button type="button" className="text-sm text-neon hover:underline" onClick={() => addBtn(ci)}>+ Tambah tombol</button>
               </div>
             </div>
           </div>
         ))}
-        <button type="button" className="btn-secondary" onClick={addCard}>+ Tambah Kartu Unduhan</button>
+        <button type="button" className="btn-secondary" onClick={addCard}>+ Tambah kartu download</button>
       </Section>
 
       {/* Result message */}
@@ -486,15 +476,12 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
       {/* Submit */}
       <div className="mb-6">
         <button className="btn-primary w-full sm:w-auto" disabled={saving} type="submit">
-          {saving ? "Menyimpan…" : "Simpan Perubahan"}
+          {saving ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
 
       <p className="text-xs text-zinc-600">
-        Tips: Di Cloudflare Pages, file bersifat read-only saat runtime. Simpan
-        saat dijalankan secara lokal, commit{" "}
-        <code>app/data/server.json</code>, lalu push untuk redeploy — atau
-        setel <code>DEPLOY_WEBHOOK_URL</code>.
+        Tips: Semua perubahan langsung tersimpan dan tampil di situs.
       </p>
     </form>
   );

@@ -22,8 +22,9 @@ export default async function AdminPage({
     <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
       <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-3">
         <p className="text-sm text-amber-200">
-          <span className="font-semibold">Peringatan:</span> Jaga kerahasiaan
-          URL ini. Siapa pun dengan link ini bisa mengubah situs.
+          <span className="font-semibold">Perhatian:</span> Jangan share
+          link ini. Siapa pun yang punya akses bisa ubah semua pengaturan
+          server.
         </p>
         <span className="shrink-0 text-xl">🔒</span>
       </div>
@@ -33,7 +34,7 @@ export default async function AdminPage({
           Pengaturan Server
         </h1>
         <p className="mt-1 text-sm text-zinc-500">
-          Perubahan langsung tersimpan dan langsung tampil di situs.
+          Semua perubahan langsung tersimpan &amp; langsung tampil di situs.
         </p>
       </div>
 

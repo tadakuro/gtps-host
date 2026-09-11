@@ -84,7 +84,6 @@ function normalizeDownloadCards(raw: unknown): DownloadCard[] {
       subtitle: str(s.subtitle),
       note: str(s.note),
       copyText: str(s.copyText),
-      hostBlock: bool(s.hostBlock),
       buttons,
     };
   }).filter((x): x is DownloadCard => x !== null && Boolean(x.title));

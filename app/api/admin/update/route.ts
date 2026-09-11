@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   const expected = process.env.ADMIN_TOKEN ?? "";
 
   if (!expected || !token || !safeEqual(token, expected)) {
-    return NextResponse.json({ error: "Tidak terotorisasi" }, { status: 401 });
+    return NextResponse.json({ error: "Akses ditolak" }, { status: 401 });
   }
 
   let payload: unknown;
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     payload = await request.json();
   } catch {
     return NextResponse.json(
-      { error: "Format JSON tidak valid" },
+      { error: "Format JSON gak valid" },
       { status: 400 }
     );
   }
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Data tidak valid: serverName, ip dan minimal satu host wajib diisi",
+          "Data belum lengkap: nama server, IP, dan minimal satu host wajib diisi",
       },
       { status: 400 }
     );
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Gagal menyimpan data server. Jika di Cloudflare, pastikan binding GTPS_KV namespace sudah dikonfigurasi.",
+          "Gagal menyimpan data. Kalau jalan di Cloudflare, pastikan binding GTPS_KV namespace sudah di-pasang.",
         detail: (err as Error).message,
       },
       { status: 500 }
@@ -76,9 +76,9 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     message:
-      "Data server tersimpan. Perubahan langsung aktif." +
+      "Berhasil disimpan! Perubahan sudah aktif di situs." +
       (process.env.DEPLOY_WEBHOOK_URL
-        ? " Webhook redeploy dijalankan."
+        ? " Webhook redeploy juga sudah dijalankan."
         : ""),
     data,
   });

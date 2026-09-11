@@ -87,9 +87,7 @@ export default async function HomePage() {
 
             <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))]">
               {data.downloadCards.map((card, i) => {
-                const copyText = card.hostBlock
-                  ? buildPtunnelConfig(data)
-                  : card.copyText;
+                const copyText = card.copyText;
                 return (
                   <div key={`card-${i}`} className="card-glow text-center">
                     <h3
