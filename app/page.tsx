@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { getServerData } from "@/lib/server-data";
-import { buildPtunnelConfig } from "@/lib/host-file";
+import { buildHostFileName, buildPtunnelConfig } from "@/lib/host-file";
 import HostButtons from "@/components/HostButtons";
 import EyeMascot from "@/components/EyeMascot";
 import PageBackground from "@/components/PageBackground";
@@ -26,6 +26,7 @@ export default async function HomePage() {
     process.env.NEXT_PUBLIC_SITE_URL ??
     `${protocol}://${host.replace(/:\d+$/, "")}`;
   const hostFileUrl = `${siteUrl.replace(/\/$/, "")}/r/host.txt`;
+  const hostFileName = buildHostFileName(data.serverName);
 
   return (
     <>
@@ -105,17 +106,28 @@ export default async function HomePage() {
                       </p>
                     )}
 
-                    {card.buttons.filter((b) => b.url.trim()).map((btn, j) => (
-                      <a
-                        key={`btn-${i}-${j}`}
-                        href={btn.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-neon mb-3 block"
-                      >
-                        {btn.label}
-                      </a>
-                    ))}
+                    {card.buttons.map((btn, j) =>
+                      btn.type === "host" ? (
+                        <a
+                          key={`btn-${i}-${j}`}
+                          href="/r/host.txt"
+                          download={hostFileName}
+                          className="btn-neon mb-3 block"
+                        >
+                          {btn.label}
+                        </a>
+                      ) : btn.url.trim() ? (
+                        <a
+                          key={`btn-${i}-${j}`}
+                          href={btn.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-neon mb-3 block"
+                        >
+                          {btn.label}
+                        </a>
+                      ) : null
+                    )}
 
                     {card.note && (
                       <p className="mb-3 mt-5 font-semibold text-neon">
@@ -175,7 +187,7 @@ export default async function HomePage() {
               </div>
 
               <div className="mt-4">
-                <HostButtons />
+                <HostButtons fileName={hostFileName} />
               </div>
 
               <p className="mt-4 text-xs text-zinc-500">

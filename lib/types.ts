@@ -14,6 +14,7 @@ export interface SocialLink {
 }
 
 export interface DownloadButton {
+  type: "link" | "host";
   label: string;
   url: string;
 }

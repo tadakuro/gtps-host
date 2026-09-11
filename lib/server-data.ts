@@ -52,10 +52,10 @@ function normalizeSocialLinks(raw: unknown): SocialLink[] {
   return raw.slice(0, 20).map((item) => {
     if (!item || typeof item !== "object") return null;
     const s = item as Record<string, unknown>;
-    return {
-      label: str(s.label),
-      url: str(s.url),
-      iconUrl: str(s.iconUrl),
+return {
+      iconUrl: str(s.iconUrl).trim(),
+      label: str(s.label).trim(),
+      url: str(s.url).trim(),
     };
   }).filter((x): x is SocialLink => x !== null && Boolean(x.label || x.url));
 }

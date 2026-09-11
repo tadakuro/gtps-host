@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-export default function HostButtons() {
+interface HostButtonsProps {
+  fileName?: string;
+}
+
+export default function HostButtons({ fileName = "host.txt" }: HostButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const copyHostUrl = async () => {
@@ -23,7 +27,7 @@ export default function HostButtons() {
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
-      <a className="btn-neon" href="/r/host.txt" download="host.txt">
+      <a className="btn-neon" href="/r/host.txt" download={fileName}>
         Download Host
       </a>
       <button className="btn-neon" onClick={copyHostUrl} type="button">

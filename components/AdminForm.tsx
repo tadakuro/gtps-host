@@ -117,7 +117,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 function emptyButton(): DownloadButton {
-  return { label: "", url: "" };
+  return { type: "link", label: "", url: "" };
 }
 
 interface AdminFormProps {
@@ -427,9 +427,17 @@ export default function AdminForm({ token, initial }: AdminFormProps) {
               <div className="mt-2">
                 <p className="mb-2 text-xs text-zinc-500">Buttons</p>
                 {card.buttons.map((btn, bi) => (
-                  <div key={`dbtn-${ci}-${bi}`} className="mb-2 flex gap-2">
-                    <input className="input" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Button label" />
-                    <input className="input font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="Button URL" />
+                  <div key={`dbtn-${ci}-${bi}`} className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <select className="input w-auto shrink-0" value={btn.type} onChange={(e) => updateBtn(ci, bi, "type", e.target.value)}>
+                      <option value="link">Link</option>
+                      <option value="host">Download Host file</option>
+                    </select>
+                    <input className="input flex-1" value={btn.label} onChange={(e) => updateBtn(ci, bi, "label", e.target.value)} placeholder="Button label" />
+                    {btn.type === "host" ? (
+                      <span className="text-xs text-zinc-500">Downloads {(form.serverName || "host").replace(/[^a-zA-Z0-9]/g, "") || "host"}.txt</span>
+                    ) : (
+                      <input className="input flex-1 font-mono" value={btn.url} onChange={(e) => updateBtn(ci, bi, "url", e.target.value)} placeholder="Button URL" />
+                    )}
                     <button type="button" className="shrink-0 rounded-lg bg-red-500/20 px-2 text-sm text-red-300 hover:bg-red-500/30" onClick={() => removeBtn(ci, bi)}>✕</button>
                   </div>
                 ))}
