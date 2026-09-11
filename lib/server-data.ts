@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { ServerData, ServerStatus, BackgroundConfig, BackgroundType, SocialLink, DownloadCard } from "./types";
+import type { ServerData, ServerStatus, BackgroundConfig, BackgroundType, SocialLink, DownloadCard, DownloadButton } from "./types";
 import { buildHostFileName } from "./host-file";
 import serverJson from "@/app/data/server.json";
 
@@ -53,8 +53,8 @@ function normalizeSocialLinks(raw: unknown): SocialLink[] {
   return raw.slice(0, 20).map((item) => {
     if (!item || typeof item !== "object") return null;
     const s = item as Record<string, unknown>;
-return {
-      type: ["link", "host", "copylink"].includes(s.type) ? (s.type as DownloadButton["type"]) : "link",
+    return {
+      iconUrl: str(s.iconUrl).trim(),
       label: str(s.label).trim(),
       url: str(s.url).trim(),
     };
@@ -70,8 +70,14 @@ function normalizeDownloadCards(raw: unknown): DownloadCard[] {
       ? (s.buttons as unknown[]).slice(0, 10).map((b) => {
           if (!b || typeof b !== "object") return null;
           const bs = b as Record<string, unknown>;
-          return { label: str(bs.label), url: str(bs.url) };
-        }).filter((x): x is { label: string; url: string } => x !== null && Boolean(x.label || x.url))
+          return {
+            type: ["link", "host", "copylink"].includes(String(bs.type ?? ""))
+              ? (bs.type as DownloadButton["type"])
+              : "link",
+            label: str(bs.label).trim(),
+            url: str(bs.url).trim(),
+          };
+        }).filter((x): x is DownloadButton => x !== null && Boolean(x.label || x.url))
       : [];
     return {
       title: str(s.title),
